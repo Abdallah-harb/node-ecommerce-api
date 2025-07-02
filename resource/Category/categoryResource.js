@@ -4,7 +4,11 @@ const CategoryResource = (category)=>{
         id:category._id,
         name:category.name,
         slug:category.slug,
-        created_at:dayjs(category.createdAt).format('YY-MM-DD')
+        created_at:dayjs(category.createdAt).format('YYYY-MM-DD')
     }
 }
-module.exports={CategoryResource}
+const CategoryCollectionResource = (categories) => {
+    return categories.map(category => CategoryResource(category));
+};
+
+module.exports={CategoryResource,CategoryCollectionResource}
