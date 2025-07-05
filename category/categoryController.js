@@ -3,6 +3,7 @@ const slugify = require('slugify');
 const {CategoryResource,CategoryCollectionResource} = require('../resource/Category/categoryResource');
 const asyncHandler = require('express-async-handler');
 const {response} = require("express");
+const ApiError = require("../utils/apiError");
 
 const index = asyncHandler(async (req,res)=>{
     const page = req.query.page * 1 || 1 ;
@@ -32,34 +33,34 @@ const store = asyncHandler(async (req,res)=>{
     return jsonResponse(res,{'category':CategoryResource(category)});
 });
 
-const show = asyncHandler(async (req,res)=>{
+const show = asyncHandler(async (req,res,next)=>{
     const {id} = req.params;
     const category = await Category.findById(id);
     if (!category){
-        return errorResponse(res,"category not found ",null,404)
+        next(new ApiError(`category not found `,404));
     }
 
    return jsonResponse(res,{'category':CategoryResource(category)})
 });
 
 
-const update = asyncHandler(async (req,res)=>{
+const update = asyncHandler(async (req,res,next)=>{
     const {name} = req.body;
     const {id} = req.params;
     const  category = await Category.findByIdAndUpdate({_id:id},{name,'slug':slugify(name)},{new:true});
     if (!category){
-        return errorResponse(res,"category not found ",null,404)
+        next(new ApiError(`category not found `,404));
     }
 
     return jsonResponse(res,{'category':CategoryResource(category)});
 });
 
-const destroy = asyncHandler(async (req,res)=>{
+const destroy = asyncHandler(async (req,res,next)=>{
     const {id} = req.params
 
     const category = await Category.findByIdAndDelete(id);
     if (!category){
-        return errorResponse(res,"category not found ",null,404)
+        next(new ApiError(`category not found `,404));
     }
 
     return jsonResponse(res,[],'category deleted successfully');
