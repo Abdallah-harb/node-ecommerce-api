@@ -9,7 +9,12 @@ const categorySchema = new mongoose.Schema({
         {
            type:String,lowercase:true
         },
-    image: { type:String }
+    image: { type:String },
+    parent:{
+        type:mongoose.Schema.ObjectId,
+        ref:'Category',
+        default:null
+    }
 
 },{
     timestamps:true,
