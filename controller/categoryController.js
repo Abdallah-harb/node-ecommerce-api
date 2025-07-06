@@ -37,7 +37,7 @@ const show = asyncHandler(async (req,res,next)=>{
     const {id} = req.params;
     const category = await Category.findById(id);
     if (!category){
-        next(new ApiError(`category not found `,404));
+      return   next(new ApiError(`category not found `,404));
     }
 
    return jsonResponse(res,{'category':CategoryResource(category)})
@@ -49,7 +49,7 @@ const update = asyncHandler(async (req,res,next)=>{
     const {id} = req.params;
     const  category = await Category.findByIdAndUpdate({_id:id},{name,'slug':slugify(name),parent},{new:true});
     if (!category){
-        next(new ApiError(`category not found `,404));
+       return  next(new ApiError(`category not found `,404));
     }
 
     return jsonResponse(res,{'category':CategoryResource(category)});
@@ -60,7 +60,7 @@ const destroy = asyncHandler(async (req,res,next)=>{
 
     const category = await Category.findByIdAndDelete(id);
     if (!category){
-        next(new ApiError(`category not found `,404));
+       return  next(new ApiError(`category not found `,404));
     }
 
     return jsonResponse(res,[],'category deleted successfully');
@@ -83,7 +83,7 @@ const subCategory = asyncHandler(async (req,res,next)=>{
     ]);
 
     if (!category.length) {
-        next(new ApiError(`category not found `,404));
+       return  next(new ApiError(`category not found `,404));
     }
     return jsonResponse(res, {
         category: {
