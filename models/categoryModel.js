@@ -19,7 +19,18 @@ const categorySchema = new mongoose.Schema({
 },{
     timestamps:true,
     versionKey:false
-})
+});
+
+// relation to return children
+categorySchema.virtual('children', {
+    ref: 'Category',
+    localField: '_id',
+    foreignField: 'parent'
+});
+
+
+categorySchema.set('toObject', { virtuals: true });
+categorySchema.set('toJSON', { virtuals: true });
 
 const Category = mongoose.model('Category',categorySchema);
 

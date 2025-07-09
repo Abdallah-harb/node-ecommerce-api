@@ -3,6 +3,7 @@ const slugify = require('slugify');
 const {BrandResource,BrandCollectionResource}= require('../resource/brands/brandResource');
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
+const Product = require('../models/productModel');
 
 const index = asyncHandler(async (req,res)=>{
     const page = req.query.page * 1 || 1 ;
@@ -57,9 +58,14 @@ const update = asyncHandler(async (req,res,next)=>{
 const destroy = asyncHandler(async (req,res,next)=>{
     const {id} = req.params
 
-    const brand = await Brand.findByIdAndDelete(id);
+    const brand = await Brand.findById(id);
     if (!brand){
-       return  next(new ApiError(`brand not found `,404));
+        return  next(new ApiError(`brand not found `,404));
+    }
+    const products = await  Product.countDocuments({'brand':id});
+
+    if(products && products > 0){
+        return  next(ApiError('cannot deleted data as it contains products'));
     }
 
     return jsonResponse(res,[],'brand deleted successfully');

@@ -5,6 +5,7 @@ const CategoryResource = (category)=>{
         name:category.name,
         slug:category.slug,
         parent:category.parent,
+        children:category.children??[],
         created_at:dayjs(category.createdAt).format('YYYY-MM-DD')
     }
 }

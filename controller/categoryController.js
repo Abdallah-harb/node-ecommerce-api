@@ -4,12 +4,14 @@ const {CategoryResource,CategoryCollectionResource} = require('../resource/Categ
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
 const mongoose = require('mongoose');
+const Product = require('../models/productModel');
+
 
 const index = asyncHandler(async (req,res)=>{
     const page = req.query.page * 1 || 1 ;
     const limit = req.query.limit * 1 || 10;
     const skip = (page - 1) * limit ;
-    const categories = await Category.find({'parent':null}).skip(skip).limit(limit);
+    const categories = await Category.find({'parent':null}).skip(skip).limit(limit).populate('children');
     const total = await Category.countDocuments();
     const totalPages = Math.ceil(total / limit);
 
@@ -35,7 +37,7 @@ const store = asyncHandler(async (req,res)=>{
 
 const show = asyncHandler(async (req,res,next)=>{
     const {id} = req.params;
-    const category = await Category.findById(id);
+    const category = await Category.findById(id).populate('children');
     if (!category){
       return   next(new ApiError(`category not found `,404));
     }
@@ -58,40 +60,21 @@ const update = asyncHandler(async (req,res,next)=>{
 const destroy = asyncHandler(async (req,res,next)=>{
     const {id} = req.params
 
-    const category = await Category.findByIdAndDelete(id);
+    const category = await Category.findById(id).populate('children');
     if (!category){
-       return  next(new ApiError(`category not found `,404));
+        return  next(new ApiError(`category not found `,404));
     }
+    const products = await Product.countDocuments({'category':id});
+
+    if (category.children.length > 0 || products > 0 ){
+        return next(new ApiError('can not delete category , already have sub-category or products related'))
+    }
+
+    await category.deleteOne();
 
     return jsonResponse(res,[],'category deleted successfully');
 });
 
 
-const subCategory = asyncHandler(async (req,res,next)=>{
-    const {id} = req.params;
-    const objectId = new mongoose.Types.ObjectId(id);
-    const category = await Category.aggregate([
-        { $match: { _id: objectId } },
-        {
-            $lookup: {
-                from: 'categories',
-                localField: '_id',
-                foreignField: 'parent',
-                as: 'children'
-            }
-        }
-    ]);
 
-    if (!category.length) {
-       return  next(new ApiError(`category not found `,404));
-    }
-    return jsonResponse(res, {
-        category: {
-            ...CategoryResource(category[0]),
-            children: CategoryCollectionResource(category[0].children || [])
-        }
-    });
-
-});
-
-module.exports = {index,store,show,update,destroy,subCategory}
+module.exports = {index,store,show,update,destroy}
