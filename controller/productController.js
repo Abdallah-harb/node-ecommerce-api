@@ -10,9 +10,33 @@ const index = asyncHandler(async (req,res)=>{
     const limit = req.query.limit * 1 || 10;
     const skip = (page - 1) * limit ;
 
-    const products = await Product.find().skip(skip).limit(limit)
-                                    .populate({path:'category',select:'_id name slug'})
-                                    .populate({path:'brand',select:'_id name slug'});
+    //filtering
+    const filter = {};
+    if (req.query.name) filter.name = { $regex: req.query.name, $options: 'i' };  // i for case sensitive
+    if (req.query.price) filter.price = {$gte:req.query.price};
+    if (req.query.ratting_average) filter.ratting_average = {$gte:req.query.ratting_average};
+
+    // keyword search filed
+    if (req.query.keyword) {
+        filter.$or=[
+            {name:{$regex: req.query.keyword,$options: 'i'}},
+            {description:{$regex: req.query.keyword,$options: 'i'}}
+        ];
+    }
+
+    let sort = '-createdAt';  // -  mean from new to oldest
+    if (req.query.sort) {
+        sort = req.query.sort;
+    }
+
+
+    const products = await Product.find(filter)
+                            .sort(sort)
+                            .skip(skip).limit(limit)
+                            .populate({path:'category',select:'_id name slug'})
+                            .populate({path:'brand',select:'_id name slug'});
+
+
     const total = await Product.countDocuments();
     const totalPages = Math.ceil(total / limit);
 
@@ -53,7 +77,7 @@ const update = asyncHandler(async (req,res,next)=>{
     const {id} = req.params;
     req.body.slug = slugify(req.body.name);
 
-    const  product = await Product.findByIdAndUpdate({_id:id},req.body,{new:true});
+    const product = await Product.findByIdAndUpdate({_id:id},req.body,{new:true});
     if (!product){
         return  next(new ApiError(`product not found `,404));
     }
@@ -71,7 +95,6 @@ const destroy = asyncHandler(async (req,res,next)=>{
 
     return jsonResponse(res,[],'product deleted successfully');
 });
-
 
 
 module.exports = {index,store,show,update,destroy}

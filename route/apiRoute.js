@@ -10,7 +10,7 @@ const {productIdValidator,storeProductValidator} = require('../validator/product
 // categories routes
 router.route('/category')
     .get(categoryController.index)
-    .post(storeCategoryValidator,categoryController.store);
+    .post(categoryController.categoryUploadFile,categoryController.resizeFile,storeCategoryValidator,categoryController.store);
 
 router.route('/category/:id')
     .get(categoryIdValidator,categoryController.show)

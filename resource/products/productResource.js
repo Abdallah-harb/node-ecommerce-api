@@ -13,6 +13,7 @@ const ProductResource = (product)=>{
         brand:product.brand??null,
         main_image:product.main_image,
         images:product.images,
+        ratting_average:product.ratting_average,
         created_at:dayjs(product.createdAt).format('YYYY-MM-DD')
     }
 }

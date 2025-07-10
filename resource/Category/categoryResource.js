@@ -4,6 +4,7 @@ const CategoryResource = (category)=>{
         id:category._id,
         name:category.name,
         slug:category.slug,
+        image:category.image?`${process.env.APP_URL}/category/${category.image}`:null,
         parent:category.parent,
         children:category.children??[],
         created_at:dayjs(category.createdAt).format('YYYY-MM-DD')

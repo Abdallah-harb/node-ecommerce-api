@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
 const app = express();
+const path = require('path');
 const ApiError = require("./utils/apiError");
 const globalErrorMiddleware = require("./middleware/globalErrorMiddleware");
 const {dbConnection} = require("./config/dbConnection");
@@ -17,6 +18,8 @@ if (process.env.APP_ENV === 'local'){
     app.use(morgan('dev'))
 }
 app.use(express.json());
+// to direct access inside folder storage
+app.use(express.static(path.join(__dirname,'storage/upload')));
 
 //routes
 app.use('/api',apiRoute);
