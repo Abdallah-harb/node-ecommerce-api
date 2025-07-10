@@ -14,7 +14,7 @@ router.route('/category')
 
 router.route('/category/:id')
     .get(categoryIdValidator,categoryController.show)
-    .put(categoryIdValidator,updateCategoryValidator,categoryController.update)
+    .put(categoryController.categoryUploadFile,categoryController.resizeFile,categoryIdValidator,updateCategoryValidator,categoryController.update)
     .delete(categoryIdValidator,categoryController.destroy);
 
 

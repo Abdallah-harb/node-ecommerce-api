@@ -21,6 +21,13 @@ exports.storeCategoryValidator = [
     check('sub').optional()
         .isBoolean().withMessage('checking sub value must be boolean and tru'),
 
+    check('image').notEmpty().withMessage('image filed is required').bail()
+        .custom((value,{req})=>{
+           if(!req.file){
+               throw new Error('image filed must be file');
+           }
+        }),
+
     check('parent')
         .if(check('sub').equals('true'))
         .notEmpty().withMessage('parent filed category is required').bail()

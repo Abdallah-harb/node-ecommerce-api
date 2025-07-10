@@ -3,41 +3,14 @@ const slugify = require('slugify');
 const {CategoryResource,CategoryCollectionResource} = require('../resource/Category/categoryResource');
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
-const mongoose = require('mongoose');
+
 const Product = require('../models/productModel');
-const multer  = require('multer');
+
 const { v4: uuidv4 } = require('uuid');
 const sharp = require("sharp");
+const {uploadSingleFile} = require('../middleware/uploadFileMiddleware');
 
-        // disk storage
-// const storageUpload = multer.diskStorage({
-//     destination:function (req,file,cb){
-//         cb(null,'storage/upload/category');
-//     },
-//     filename:function (req,file,cb){
-//         const extension = file.mimetype.split('/')[1];
-//         const fileName = `category_${uuidv4}_${Date.now()}.${extension}`;
-//         cb(null,fileName);
-//     }
-// });
-
-
-        // memory storage
-const memoryStorage = multer.memoryStorage();
-const multerFilter = function (req,file,cb){
-    if (file.mimetype.startsWith('image')){
-        cb(null,true);
-    }else {
-        cb(ApiError('only images are allowed',422));
-    }
-}
-
-const upload = multer({ storage: memoryStorage ,
-                                      fileFilter: multerFilter,
-                                    limits: {
-                                         fileSize: 5 * 1024 * 1024  // 5mb
-                                     }});
-const categoryUploadFile = upload.single('image');
+const categoryUploadFile = uploadSingleFile('image');
 
 const resizeFile =  asyncHandler(async (req,file,next)=> {
     const fileName = `category_${uuidv4()}_${Date.now()}.jpeg`;
@@ -47,7 +20,7 @@ const resizeFile =  asyncHandler(async (req,file,next)=> {
         .toFormat('jpeg')
         .jpeg({quality:90})
         .toFile(`storage/upload/category/${fileName}`);
-        req.body.image=fileName;
+         req.body.image=fileName;
 
     next();
 });
