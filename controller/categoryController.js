@@ -1,5 +1,4 @@
 const Category = require('../models/categoryModel')
-const slugify = require('slugify');
 const {CategoryResource,CategoryCollectionResource} = require('../resource/Category/categoryResource');
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
@@ -47,8 +46,6 @@ const index = asyncHandler(async (req,res)=>{
 
 
 const store = asyncHandler(async (req,res)=>{
-    const {name,parent} = req.body;
-     req.body.slug=slugify(name);
     const category = await Category.create(req.body);
 
     return jsonResponse(res,{'category':CategoryResource(category)});
@@ -66,9 +63,8 @@ const show = asyncHandler(async (req,res,next)=>{
 
 
 const update = asyncHandler(async (req,res,next)=>{
-    const {name,parent} = req.body;
     const {id} = req.params;
-    const  category = await Category.findByIdAndUpdate({_id:id},{name,'slug':slugify(name),parent},{new:true});
+    const  category = await Category.findByIdAndUpdate({_id:id},req.body,{new:true});
     if (!category){
        return  next(new ApiError(`category not found `,404));
     }

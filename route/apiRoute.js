@@ -6,6 +6,21 @@ const brandController = require('../controller/brandController');
 const {brandIdValidator,storeBrandValidator,updateBrandValidator} = require('../validator/brandValidator');
 const productController = require('../controller/productController');
 const {productIdValidator,storeProductValidator,updateProductValidator} = require('../validator/productValidator')
+const userController = require('../controller/userController');
+const {userIdValidator,storeUserValidator,updateUserValidate} = require('../validator/userValidator');
+const {get} = require("mongoose");
+
+//user routes
+router.route('/user')
+    .get(userController.index)
+    .post(userController.userFile,userController.resizeFile,storeUserValidator,userController.store);
+
+router.route('/user/:id')
+    .get(userIdValidator,userController.show)
+    .put(userIdValidator,userController.userFile,userController.resizeFile,updateUserValidate,userController.update)
+    .delete(userIdValidator,userController.destroy);
+
+
 
 // categories routes
 router.route('/category')

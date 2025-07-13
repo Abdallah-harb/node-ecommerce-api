@@ -2,6 +2,7 @@ const {check} = require('express-validator');
 const validatorMiddleware = require("../middleware/validatorMiddleware");
 const Category = require('../models/categoryModel');
 const Brand = require("../models/brandModel");
+const slugify = require("slugify");
 
 exports.categoryIdValidator = [
     check('id').isMongoId().withMessage('invalid id format,please enter valid id'),
@@ -11,11 +12,12 @@ exports.categoryIdValidator = [
 exports.storeCategoryValidator = [
     check('name').notEmpty().withMessage('name filed is required').bail()
         .isLength({min:3,max:50}).withMessage('min length is 3 char and max is 50 char')
-        .custom(async value=>{
+        .custom(async (value,{req})=>{
             const name = await Category.findOne({name:value});
             if (name){
                 throw new Error('These category already exists');
             }
+            req.body = slugify(value);
             return true
         }),
     check('sub').optional()
@@ -61,6 +63,7 @@ exports.updateCategoryValidator = [
             if (name) {
                 throw new Error('This brand already exists');
             }
+            req.body = slugify(value);
             return true;
         }),
 
