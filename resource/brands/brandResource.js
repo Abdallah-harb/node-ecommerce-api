@@ -4,6 +4,7 @@ const BrandResource = (brand)=>{
         id:brand._id,
         name:brand.name,
         slug:brand.slug,
+        image:brand.image?`${process.env.APP_URL}/brand/${brand.image}`:null,
         created_at:dayjs(brand.createdAt).format('YYYY-MM-DD')
     }
 }

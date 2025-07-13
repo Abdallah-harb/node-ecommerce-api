@@ -4,6 +4,27 @@ const {BrandResource,BrandCollectionResource}= require('../resource/brands/brand
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
 const Product = require('../models/productModel');
+const {uploadSingleFile} = require('../middleware/uploadFileMiddleware');
+const sharp = require("sharp");
+const { v4: uuidv4 } = require('uuid');
+
+
+const brandImage = uploadSingleFile('image');
+
+const resizeFile =  asyncHandler(async (req,file,next)=> {
+    const fileName = `brand_${uuidv4()}_${Date.now()}.jpeg`;
+
+    await sharp(req.file.buffer)
+        .resize(600,600)
+        .toFormat('jpeg')
+        .jpeg({quality:90})
+        .toFile(`storage/upload/brand/${fileName}`);
+
+    req.body.image=fileName;
+
+    next();
+});
+
 
 const index = asyncHandler(async (req,res)=>{
     const page = req.query.page * 1 || 1 ;
@@ -28,7 +49,8 @@ const index = asyncHandler(async (req,res)=>{
 
 const store = asyncHandler(async (req,res)=>{
     const {name} = req.body;
-    const brand = await Brand.create({name,'slug':slugify(name)});
+    req.body.slug=slugify(name);
+    const brand = await Brand.create(req.body);
 
     return jsonResponse(res,{'brand':BrandResource(brand)});
 });
@@ -47,7 +69,9 @@ const show = asyncHandler(async (req,res,next)=>{
 const update = asyncHandler(async (req,res,next)=>{
     const {name} = req.body;
     const {id} = req.params;
-    const  brand = await Brand.findByIdAndUpdate({_id:id},{name,'slug':slugify(name)},{new:true});
+    req.body.slug = slugify(name);
+
+    const  brand = await Brand.findByIdAndUpdate({_id:id},req.body,{new:true});
     if (!brand){
        return  next(new ApiError(`brand not found `,404));
     }
@@ -71,4 +95,4 @@ const destroy = asyncHandler(async (req,res,next)=>{
     return jsonResponse(res,[],'brand deleted successfully');
 });
 
-module.exports = {index,store,show,update,destroy}
+module.exports = {index,store,show,update,destroy,brandImage,resizeFile}

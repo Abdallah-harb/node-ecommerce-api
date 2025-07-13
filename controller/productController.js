@@ -3,7 +3,46 @@ const slugify = require('slugify');
 const {ProductResource,ProductCollectionResource} = require('../resource/products/productResource');
 const asyncHandler = require('express-async-handler');
 const ApiError = require("../utils/apiError");
+const { v4: uuidv4 } = require('uuid');
 
+const {uploadMultiFiles} = require('../middleware/uploadFileMiddleware');
+const sharp = require("sharp");
+
+const productFiles = uploadMultiFiles([{name:'main_image',maxCount:1},{name: 'images[]',maxCount: 5}]);
+
+const resizeFiles = asyncHandler(async (req,res,next)=>{
+
+    if (req.files.main_image){
+        const main_image = `product_${uuidv4()}_${Date.now()}_main.jpeg`;
+
+        await sharp(req.files.main_image[0].buffer)
+            .resize(2000,1333)
+            .toFormat('jpeg')
+            .jpeg({quality:90})
+            .toFile(`storage/upload/product/${main_image}`);
+
+            req.body.main_image = main_image;
+    }
+
+    if (req.files['images[]']){
+
+        req.body.images =[];
+
+        await Promise.all(req.files['images[]'].map(async (image, index) => {
+            const imageName = `product_${uuidv4()}_${Date.now()}_${index}.jpeg`;
+
+            await sharp(image.buffer)
+                .resize(2000, 1333)
+                .toFormat('jpeg')
+                .jpeg({quality: 90})
+                .toFile(`storage/upload/product/${imageName}`);
+
+            req.body.images.push(imageName);
+        }));
+    }
+
+    next();
+});
 
 const index = asyncHandler(async (req,res)=>{
     const page = req.query.page * 1 || 1 ;
@@ -35,7 +74,6 @@ const index = asyncHandler(async (req,res)=>{
                             .skip(skip).limit(limit)
                             .populate({path:'category',select:'_id name slug'})
                             .populate({path:'brand',select:'_id name slug'});
-
 
     const total = await Product.countDocuments();
     const totalPages = Math.ceil(total / limit);
@@ -97,4 +135,4 @@ const destroy = asyncHandler(async (req,res,next)=>{
 });
 
 
-module.exports = {index,store,show,update,destroy}
+module.exports = {index,store,show,update,destroy,productFiles,resizeFiles}

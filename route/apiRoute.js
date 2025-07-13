@@ -5,7 +5,7 @@ const {categoryIdValidator,storeCategoryValidator,updateCategoryValidator} = req
 const brandController = require('../controller/brandController');
 const {brandIdValidator,storeBrandValidator,updateBrandValidator} = require('../validator/brandValidator');
 const productController = require('../controller/productController');
-const {productIdValidator,storeProductValidator} = require('../validator/productValidator')
+const {productIdValidator,storeProductValidator,updateProductValidator} = require('../validator/productValidator')
 
 // categories routes
 router.route('/category')
@@ -14,7 +14,8 @@ router.route('/category')
 
 router.route('/category/:id')
     .get(categoryIdValidator,categoryController.show)
-    .put(categoryController.categoryUploadFile,categoryController.resizeFile,categoryIdValidator,updateCategoryValidator,categoryController.update)
+    .put(categoryController.categoryUploadFile,categoryController.resizeFile,
+        categoryIdValidator,updateCategoryValidator,categoryController.update)
     .delete(categoryIdValidator,categoryController.destroy);
 
 
@@ -22,21 +23,22 @@ router.route('/category/:id')
 // brand routes
 router.route('/brand')
     .get(brandController.index)
-    .post(storeBrandValidator,brandController.store);
+    .post(brandController.brandImage,brandController.resizeFile,storeBrandValidator,brandController.store);
 
 router.route('/brand/:id')
     .get(brandIdValidator,brandController.show)
-    .put(brandIdValidator,updateBrandValidator,brandController.update)
+    .put(brandIdValidator,brandController.brandImage,brandController.resizeFile,updateBrandValidator,brandController.update)
     .delete(brandIdValidator,brandController.destroy);
 
 // products routes
 router.route('/product')
     .get(productController.index)
-    .post(storeProductValidator,productController.store);
+    .post(productController.productFiles,productController.resizeFiles,storeProductValidator,productController.store);
 
 router.route('/product/:id')
     .get(productIdValidator,productController.show)
-    .put(productIdValidator,storeProductValidator,productController.update)
+    .put(productIdValidator,productController.productFiles,productController.resizeFiles,
+        updateProductValidator,productController.update)
     .delete(productIdValidator,productController.destroy);
 
 

@@ -69,6 +69,29 @@ const productSchema = new mongoose.Schema({
     }
 },{timestamps:true,versionKey:false});
 
+const imageUrl =(doc)=>{
+    const image = `${process.env.APP_URL}/product/${doc.main_image}`;
+        doc.main_image = image;
+        
+    if (doc.images){
+        const imagesList = [];
+        doc.images.forEach((image)=>{
+            const file = `${process.env.APP_URL}/product/${image}`;
+            imagesList.push(file);
+        });
+        doc.images=imagesList;
+    }
+}
+// findOne , findAll , update
+productSchema.post('init', function(doc) {
+    imageUrl(doc);
+});
+
+// create
+productSchema.post('save',function (doc) {
+    imageUrl(doc);
+})
+
 const Product = mongoose.model('Product',productSchema);
 
 module.exports = Product;

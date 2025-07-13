@@ -100,6 +100,10 @@ exports.updateProductValidator = [
             }
             return true
         }),
+    check('main_image')
+        .optional(),
+
+    check('images').optional().isArray().withMessage('images must be array'),
 
     validatorMiddleware
 ]
