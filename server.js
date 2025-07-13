@@ -6,6 +6,7 @@ const ApiError = require("./utils/apiError");
 const globalErrorMiddleware = require("./middleware/globalErrorMiddleware");
 const {dbConnection} = require("./config/dbConnection");
 const apiRoute = require('./route/apiRoute');
+const authRoute = require('./route/authRoute');
 
 require('./helpier/response');
 
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname,'storage/upload')));
 
 //routes
 app.use('/api',apiRoute);
+app.use('/api/auth',authRoute);
 
 //middleware for route not find
 app.use((req,res,next)=>{
