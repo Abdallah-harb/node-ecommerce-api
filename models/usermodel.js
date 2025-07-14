@@ -1,6 +1,6 @@
 const mongoose  = require('mongoose');
 const bcrypt = require('bcryptjs');
-
+const {sendMail} = require('../utils/authMail')
 const userSchema = new mongoose.Schema({
     name:{
             type:String,
@@ -13,6 +13,14 @@ const userSchema = new mongoose.Schema({
         lowercase:true,
         required:true,
         unique:true
+    },
+    email_code_verified:{
+      type:String,
+        default:null
+    },
+    email_verified_at:{
+        type:Date,
+        default:null
     },
     password:{
         type:String,
@@ -50,7 +58,17 @@ userSchema.pre('save',function (){
 // find , findOne , update
 userSchema.pre('init',function (doc) {
     imageUrl(doc);
-})
+});
+
+
+// generate code verification
+userSchema.methods.sentCodeVerification =async function (){
+    const code = Math.floor(100000+Math.random()*900000);
+    this.email_code_verified = await bcrypt.hash(code.toString(),10);
+    await this.save();
+    await sendMail({code:code,email:this.email});
+
+}
 
 const User = mongoose.model('User',userSchema);
 module.exports = User;
