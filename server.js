@@ -7,6 +7,8 @@ const globalErrorMiddleware = require("./middleware/globalErrorMiddleware");
 const {dbConnection} = require("./config/dbConnection");
 const apiRoute = require('./route/apiRoute');
 const authRoute = require('./route/authRoute');
+const {checkAuth} = require('./middleware/checkAuthMiddleware');
+const {adminRoutes} = require('./middleware/adminMiddlewrae');
 
 require('./helpier/response');
 
@@ -22,9 +24,13 @@ app.use(express.json());
 // to direct access inside folder storage
 app.use(express.static(path.join(__dirname,'storage/upload')));
 
-//routes
-app.use('/api',apiRoute);
-app.use('/api/auth',authRoute);
+// auth routes
+app.use('/api',authRoute);
+
+//routes admin dashboard
+app.use('/api/admin',checkAuth,adminRoutes,apiRoute);
+
+
 
 //middleware for route not find
 app.use((req,res,next)=>{

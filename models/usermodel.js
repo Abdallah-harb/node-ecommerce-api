@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
         required:true,
         maxLength:[200,'max password length is 200 char']
     },
+    password_changed_at:{
+        type:Date,
+        default:null
+    },
+
     phone:{
         type:String,
         default:null,
@@ -43,22 +48,22 @@ const userSchema = new mongoose.Schema({
 },{timestamps:true,versionKey:false});
 
 
-const imageUrl = (doc)=>{
-    if (doc.image){
-        const image = `${process.env.APP_URL}/user/${doc.image}`;
-        doc.image = image;
-    }
-}
-
-// create
-userSchema.pre('save',function (){
-    imageUrl(this);
-});
-
-// find , findOne , update
-userSchema.pre('init',function (doc) {
-    imageUrl(doc);
-});
+// const imageUrl = (doc)=>{
+//     if (doc.image){
+//         const image = `${process.env.APP_URL}/user/${doc.image}`;
+//         doc.image = image;
+//     }
+// }
+//
+// // create
+// userSchema.pre('save',function (){
+//     imageUrl(this);
+// });
+//
+// // find , findOne , update
+// userSchema.pre('init',function (doc) {
+//     imageUrl(doc);
+// });
 
 
 // generate code verification

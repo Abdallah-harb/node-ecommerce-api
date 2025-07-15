@@ -8,14 +8,14 @@ const productController = require('../controller/productController');
 const {productIdValidator,storeProductValidator,updateProductValidator} = require('../validator/productValidator')
 const userController = require('../controller/userController');
 const {userIdValidator,storeUserValidator,updateUserValidate} = require('../validator/userValidator');
-const {get} = require("mongoose");
+
 
 //user routes
-router.route('/user')
+router.route('/users')
     .get(userController.index)
     .post(userController.userFile,userController.resizeFile,storeUserValidator,userController.store);
 
-router.route('/user/:id')
+router.route('/users/:id')
     .get(userIdValidator,userController.show)
     .put(userIdValidator,userController.userFile,userController.resizeFile,updateUserValidate,userController.update)
     .delete(userIdValidator,userController.destroy);
