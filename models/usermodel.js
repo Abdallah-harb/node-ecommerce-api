@@ -43,7 +43,11 @@ const userSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        default:null,
+        default:'user',
+    },
+    status:{
+      type:Boolean,
+      default:true
     }
 },{timestamps:true,versionKey:false});
 

@@ -7,6 +7,7 @@ const UserResource = (user)=>{
         phone:user.phone,
         image:user.image?`${process.env.APP_URL}/user/${user.image}`:null,
         role:user.role,
+        status:user.status,
         created_at:dayjs(user.createdAt).format('YYYY-MM-DD')
     }
 }

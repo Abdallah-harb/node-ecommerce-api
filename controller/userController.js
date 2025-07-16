@@ -85,4 +85,17 @@ const destroy = asyncHandler(async (req,res)=>{
     return  jsonResponse(res,[],'user deleted successfully');
 });
 
-module.exports={index,show,store,update,destroy,userFile,resizeFile};
+const changeStatus = asyncHandler(async (req,res,next)=>{
+    const {id} = req.params;
+    const user = await User.findById(id);
+    if(!user){
+        return next(new ApiError('user not found',404));
+    }
+
+    user.status = !user.status;
+    await user.save();
+
+    return  jsonResponse(res,[],'data update successfully');
+});
+
+module.exports={index,show,store,update,destroy,userFile,resizeFile,changeStatus};

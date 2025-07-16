@@ -20,6 +20,9 @@ router.route('/users/:id')
     .put(userIdValidator,userController.userFile,userController.resizeFile,updateUserValidate,userController.update)
     .delete(userIdValidator,userController.destroy);
 
+router.route('/users-status/:id')
+    .patch(userIdValidator,userController.changeStatus);
+
 
 
 // categories routes
