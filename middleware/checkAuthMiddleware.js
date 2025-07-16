@@ -19,6 +19,9 @@ exports.checkAuth = asyncHandler(async (req,res,next)=>{
         if (!user){
             return next(new ApiError('the user that belong to token , not exists',401));
         }
+        if(user.status === false){
+            return  next(new ApiError('these account is blocked by administrator ,please contact with call-center',400));
+        }
         req.user = user;
         next();
     }catch (e) {
