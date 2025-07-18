@@ -1,15 +1,15 @@
 const express = require('express')
 const router = express.Router();
-const categoryController = require('../controller/categoryController');
+const categoryController = require('../controller/Admin/categoryController');
 const {categoryIdValidator,storeCategoryValidator,updateCategoryValidator} = require("../validator/categoryValidator");
-const brandController = require('../controller/brandController');
+const brandController = require('../controller/Admin/brandController');
 const {brandIdValidator,storeBrandValidator,updateBrandValidator} = require('../validator/brandValidator');
-const productController = require('../controller/productController');
+const productController = require('../controller/Admin/productController');
 const {productIdValidator,storeProductValidator,updateProductValidator} = require('../validator/productValidator')
-const userController = require('../controller/userController');
+const userController = require('../controller/Admin/userController');
 const {userIdValidator,storeUserValidator,updateUserValidate} = require('../validator/userValidator');
-
-
+const reviewController = require('../controller/Admin/reviewController');
+const {ValidateReviewId,ReviewValidate} = require('../validator/reviewValidator');
 //user routes
 router.route('/users')
     .get(userController.index)
@@ -58,6 +58,18 @@ router.route('/product/:id')
     .put(productIdValidator,productController.productFiles,productController.resizeFiles,
         updateProductValidator,productController.update)
     .delete(productIdValidator,productController.destroy);
+
+//reviews routes
+router.route('/reviews')
+    .get(reviewController.index)
+    .post(ReviewValidate,reviewController.store)
+
+router.route('/reviews/:id')
+    .get(ValidateReviewId,reviewController.show)
+    .put(ValidateReviewId,ReviewValidate,reviewController.update)
+    .delete(ValidateReviewId,reviewController.destroy);
+
+router.patch('/review-togglesActive/:id',ValidateReviewId,reviewController.togglesActive)
 
 
 module.exports = router
