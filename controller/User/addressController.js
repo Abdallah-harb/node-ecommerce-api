@@ -7,8 +7,8 @@ const index = asyncHandler(async (req,res)=>{
     const limit = req.query.limit * 1 || 10;
     const skip = (page - 1) * limit ;
     const user = await User.findById(req.user._id).select('wishlist').populate({
-                                                                 path: 'wishlist',model: 'Product',select:"_id name slug main_image images",
-                                                                options: {skip,limit }});
+        path: 'wishlist',model: 'Product',select:"_id name slug main_image images",
+        options: {skip,limit }});
 
     const totalUser = await User.findById(req.user._id).select('wishlist');
     const total = totalUser.wishlist.length;
@@ -28,9 +28,8 @@ const index = asyncHandler(async (req,res)=>{
 
 const add = asyncHandler(async (req,res)=>{
     //$addToSet add product if not exists if it exists keep it
-    const productId = req.body.product_id;
     const user = await User.findByIdAndUpdate(req.user._id,
-        {$addToSet: {wishlist:productId}},
+        {$addToSet: {address:req.body}},
         {new:true});
     return jsonResponse(res,{"wishlist":user.wishlist},'product add to wishlist');
 });

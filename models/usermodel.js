@@ -53,6 +53,16 @@ const userSchema = new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:"Product"
     }],
+    address:[
+        {
+            id: {type:mongoose.Schema.Types.ObjectId},
+            country:String,
+            city:String,
+            alies:String,
+            details:String,
+            phone:String,
+        }
+    ]
 },{timestamps:true,versionKey:false});
 
 
