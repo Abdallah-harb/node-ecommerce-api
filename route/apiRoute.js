@@ -70,6 +70,7 @@ router.route('/reviews/:id')
     .delete(ValidateReviewId,reviewController.destroy);
 
 router.patch('/review-togglesActive/:id',ValidateReviewId,reviewController.togglesActive)
+router.get('/product/:id/review',ValidateReviewId,reviewController.productReview);
 
 
 module.exports = router

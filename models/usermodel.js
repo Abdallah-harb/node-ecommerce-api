@@ -48,7 +48,11 @@ const userSchema = new mongoose.Schema({
     status:{
       type:Boolean,
       default:true
-    }
+    },
+    wishlist:[{
+        type:mongoose.Schema.ObjectId,
+        ref:"Product"
+    }],
 },{timestamps:true,versionKey:false});
 
 

@@ -7,6 +7,7 @@ const globalErrorMiddleware = require("./middleware/globalErrorMiddleware");
 const {dbConnection} = require("./config/dbConnection");
 const apiRoute = require('./route/apiRoute');
 const authRoute = require('./route/authRoute');
+const userRoute = require('./route/userRoute');
 const {checkAuth} = require('./middleware/checkAuthMiddleware');
 const {adminRoutes} = require('./middleware/adminMiddlewrae');
 
@@ -27,6 +28,8 @@ app.use(express.static(path.join(__dirname,'storage/upload')));
 // auth routes
 app.use('/api',authRoute);
 
+//user routes
+app.use('/api',checkAuth,userRoute);
 //routes admin dashboard
 app.use('/api/admin',checkAuth,adminRoutes,apiRoute);
 
