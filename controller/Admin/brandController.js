@@ -1,10 +1,10 @@
-const Brand = require('../models/brandModel')
+const Brand = require('../../models/brandModel')
 const slugify = require('slugify');
-const {BrandResource,BrandCollectionResource}= require('../resource/brands/brandResource');
+const {BrandResource,BrandCollectionResource}= require('../../resource/brands/brandResource');
 const asyncHandler = require('express-async-handler');
-const ApiError = require("../utils/apiError");
-const Product = require('../models/productModel');
-const {uploadSingleFile} = require('../middleware/uploadFileMiddleware');
+const ApiError = require("../../utils/apiError");
+const Product = require('../../models/productModel');
+const {uploadSingleFile} = require('../../middleware/uploadFileMiddleware');
 const sharp = require("sharp");
 const { v4: uuidv4 } = require('uuid');
 

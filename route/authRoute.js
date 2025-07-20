@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router();
-const authController = require('../controller/authController');
+const authController = require('../controller/Shared/authController');
 const {RegisterValidator,verifyCodeValidate,resendCodeVerifyValidate,loginValidate} = require('../validator/Auth/authValidator');
-const profileController = require('../controller/profileController');
+const profileController = require('../controller/Shared/profileController');
 const {checkAuth} = require('../middleware/checkAuthMiddleware');
 const {updateProfileValidator,changePasswordValidator} = require('../validator/Auth/profileValidator');
 

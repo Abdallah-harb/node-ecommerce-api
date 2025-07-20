@@ -1,11 +1,11 @@
-const Product = require('../models/productModel')
+const Product = require('../../models/productModel')
 const slugify = require('slugify');
-const {ProductResource,ProductCollectionResource} = require('../resource/products/productResource');
+const {ProductResource,ProductCollectionResource} = require('../../resource/products/productResource');
 const asyncHandler = require('express-async-handler');
-const ApiError = require("../utils/apiError");
+const ApiError = require("../../utils/apiError");
 const { v4: uuidv4 } = require('uuid');
 
-const {uploadMultiFiles} = require('../middleware/uploadFileMiddleware');
+const {uploadMultiFiles} = require('../../middleware/uploadFileMiddleware');
 const sharp = require("sharp");
 
 const productFiles = uploadMultiFiles([{name:'main_image',maxCount:1},{name: 'images[]',maxCount: 5}]);

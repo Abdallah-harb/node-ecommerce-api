@@ -1,13 +1,13 @@
-const Category = require('../models/categoryModel')
-const {CategoryResource,CategoryCollectionResource} = require('../resource/Category/categoryResource');
+const Category = require('../../models/categoryModel')
+const {CategoryResource,CategoryCollectionResource} = require('../../resource/Category/categoryResource');
 const asyncHandler = require('express-async-handler');
-const ApiError = require("../utils/apiError");
+const ApiError = require("../../utils/apiError");
 
-const Product = require('../models/productModel');
+const Product = require('../../models/productModel');
 
 const { v4: uuidv4 } = require('uuid');
 const sharp = require("sharp");
-const {uploadSingleFile} = require('../middleware/uploadFileMiddleware');
+const {uploadSingleFile} = require('../../middleware/uploadFileMiddleware');
 
 const categoryUploadFile = uploadSingleFile('image');
 

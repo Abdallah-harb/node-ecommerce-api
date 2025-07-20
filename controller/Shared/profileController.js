@@ -1,11 +1,11 @@
 const asyncHandler = require('express-async-handler')
-const {UserResource} = require('../resource/user/userResource');
-const {uploadSingleFile} = require('../middleware/uploadFileMiddleware');
+const {UserResource} = require('../../resource/user/userResource');
+const {uploadSingleFile} = require('../../middleware/uploadFileMiddleware');
 const sharp = require("sharp");
 const fs = require('fs');
 const path = require('path');
-const ApiError = require("../utils/apiError");
-const LoggerServices = require('../utils/Logger/LoggerServices');
+const ApiError = require("../../utils/apiError");
+const LoggerServices = require('../../utils/Logger/LoggerServices');
 const Logger = new LoggerServices('log');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs')

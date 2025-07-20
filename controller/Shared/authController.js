@@ -1,9 +1,9 @@
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcryptjs');
-const User = require('../models/usermodel');
-const LoggerServices = require('../utils/Logger/LoggerServices');
+const User = require('../../models/usermodel');
+const LoggerServices = require('../../utils/Logger/LoggerServices');
 const Logger = new LoggerServices('log');
-const ApiError = require("../utils/apiError");
+const ApiError = require("../../utils/apiError");
 const jwt = require('jsonwebtoken');
 
 
