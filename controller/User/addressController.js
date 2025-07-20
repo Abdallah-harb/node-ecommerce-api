@@ -6,12 +6,12 @@ const index = asyncHandler(async (req,res)=>{
     const page = req.query.page * 1 || 1 ;
     const limit = req.query.limit * 1 || 10;
     const skip = (page - 1) * limit ;
-    const user = await User.findById(req.user._id).select('wishlist').populate({
-        path: 'wishlist',model: 'Product',select:"_id name slug main_image images",
+    const user = await User.findById(req.user._id).select('address').populate({
+        path: 'address',
         options: {skip,limit }});
 
-    const totalUser = await User.findById(req.user._id).select('wishlist');
-    const total = totalUser.wishlist.length;
+    const totalUser = await User.findById(req.user._id).select('address');
+    const total = totalUser.address.length;
     const totalPages = Math.ceil(total / limit);
 
     const pagination = {
@@ -23,33 +23,29 @@ const index = asyncHandler(async (req,res)=>{
         has_prev_page: page > 1
     };
 
-    return jsonResponse(res,{'wishlist':user.wishlist,"pagination":pagination})
+    return jsonResponse(res,{'address':user.address,"pagination":pagination})
 });
 
+// add or update
 const add = asyncHandler(async (req,res)=>{
-    //$addToSet add product if not exists if it exists keep it
+
     const user = await User.findByIdAndUpdate(req.user._id,
         {$addToSet: {address:req.body}},
         {new:true});
-    return jsonResponse(res,{"wishlist":user.wishlist},'product add to wishlist');
+    return jsonResponse(res,{"address":user.address});
 });
 
 const remove = asyncHandler(async (req,res)=>{
     //$pull remove product if not exists if it not in ignore it
-    const productId = req.body.product_id;
+    const addressId = req.params.id;
+    console.log(addressId)
     const user = await User.findByIdAndUpdate(req.user._id,
-        {$pull: {wishlist:productId}},
+        {$pull: {address: {_id:addressId}}},
         {new:true});
-    return jsonResponse(res,{"wishlist":user.wishlist},'product add to wishlist');
-});
-
-const destroy = asyncHandler(async (req,res)=>{
-
-    const user = await User.findByIdAndUpdate(req.user._id,
-        {$set: {wishlist:[]}},
-        {new:true});
-    return jsonResponse(res,{"wishlist":user.wishlist},'wishlist cleared successfully');
+    return jsonResponse(res,{},'address deleted successfully');
 });
 
 
-module.exports={index,add,remove,destroy}
+
+
+module.exports={index,add,remove}

@@ -58,30 +58,12 @@ const userSchema = new mongoose.Schema({
             id: {type:mongoose.Schema.Types.ObjectId},
             country:String,
             city:String,
-            alies:String,
+            alies:String,  // as title ( Home address , work Address )
             details:String,
             phone:String,
         }
     ]
 },{timestamps:true,versionKey:false});
-
-
-// const imageUrl = (doc)=>{
-//     if (doc.image){
-//         const image = `${process.env.APP_URL}/user/${doc.image}`;
-//         doc.image = image;
-//     }
-// }
-//
-// // create
-// userSchema.pre('save',function (){
-//     imageUrl(this);
-// });
-//
-// // find , findOne , update
-// userSchema.pre('init',function (doc) {
-//     imageUrl(doc);
-// });
 
 
 // generate code verification
