@@ -46,6 +46,7 @@ const index = asyncHandler(async (req,res)=>{
 
 
 const store = asyncHandler(async (req,res)=>{
+
     const category = await Category.create(req.body);
 
     return jsonResponse(res,{'category':CategoryResource(category)});

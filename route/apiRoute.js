@@ -10,6 +10,9 @@ const userController = require('../controller/Admin/userController');
 const {userIdValidator,storeUserValidator,updateUserValidate} = require('../validator/userValidator');
 const reviewController = require('../controller/Admin/reviewController');
 const {ValidateReviewId,ReviewValidate} = require('../validator/reviewValidator');
+const {CouponValidator,CouponIdValidator} = require('../validator/couponValidator');
+const couponController = require('../controller/Admin/couponController');
+
 //user routes
 router.route('/users')
     .get(userController.index)
@@ -71,6 +74,19 @@ router.route('/reviews/:id')
 
 router.patch('/review-togglesActive/:id',ValidateReviewId,reviewController.togglesActive)
 router.get('/product/:id/review',ValidateReviewId,reviewController.productReview);
+
+
+//coupon routes
+router.route("/coupons")
+    .get(couponController.index)
+    .post(CouponValidator,couponController.store)
+router.route("/coupons/:id")
+    .get(CouponIdValidator,couponController.show)
+    .put(CouponIdValidator,couponController.update)
+    .patch(CouponIdValidator,couponController.toggleActive)
+    .delete(CouponIdValidator,couponController.destroy);
+
+
 
 
 module.exports = router
