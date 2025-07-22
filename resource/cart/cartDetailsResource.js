@@ -23,11 +23,13 @@ const CartResource = async (cart) => {
         })
     );
 
+    const totalPrice = cart.coupon?cart.total_price: Number(total_price.toFixed(2));
+    const totalAfterDiscount = cart.coupon?cart.total_price_after_discount:Number(total_price_after_discount.toFixed(2));
     return {
         id: cart._id,
         cartItems:cartItems,
-        total_price:total_price,
-        price_after_discount: total_price_after_discount,
+        total_price:totalPrice,
+        price_after_discount: totalAfterDiscount,
         user: cart.user,
     };
 };

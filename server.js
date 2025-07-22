@@ -46,8 +46,10 @@ app.use(globalErrorMiddleware)
 const port = process.env.APP_PORT || 8000;
 const server = app.listen(port,()=>{
     console.log(`app listen on port ${port}`)
-})
+});
 
+// cron-job
+ require('./jobs/couponScheduleJob');
 
 // handel error outside express as DB connect or any things
 process.on('unhandledRejection',(error)=>{

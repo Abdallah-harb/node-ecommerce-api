@@ -3,7 +3,8 @@ const Product = require('../../models/productModel');
 const ApiError = require("../../utils/apiError");
 const asyncHandler = require('express-async-handler');
 const {CartResource} = require('../../resource/cart/cartDetailsResource');
-
+const Coupon = require('../../models/couponModel');
+const {cartPrice} = require('../../utils/cartPrice');
 
 const index = asyncHandler(async (req,res)=>{
     const cart = await Cart.findOne({'user':req.user._id}).populate('cartItems.product');
@@ -71,6 +72,40 @@ const clearCart = asyncHandler(async (req,res,next)=>{
     }
     await cart.deleteOne();
     return jsonResponse(res,null,'cart cleared successfully');
-})
+});
 
-module.exports={index,addToCart,increaseDecrease,clearCart}
+const applyCoupon = asyncHandler(async (req,res,next)=>{
+    const cart = await Cart.findOne({ user: req.user._id });
+    if(!cart){
+        return next(new ApiError('user not have cart yet',400))
+    }
+   const code = req.body.coupon;
+    const coupon = await Coupon.findOne({
+        code: code,
+        status: true,
+        expire:{$gte:new Date()},
+        $expr: { $lt: ["$usage_number", "$max_limit"] }
+    });
+    if(!coupon){
+        return  next(new ApiError('coupon code is invalid , or may be expired',400));
+    }
+    // check if user used coupon
+    if(coupon.users.find((item) =>  item.equals(req.user._id))){
+        return next(new ApiError('You have already used this coupon.',400));
+    }
+
+    coupon.users.push(req.user._id);
+    coupon.usage_number += 1;
+    await coupon.save();
+
+    const prices = await cartPrice(cart,coupon.discount);
+    cart.coupon = coupon._id;
+    cart.total_price = prices.total_price;
+    cart.total_price_after_discount = prices.total_price_after_discount;
+    await cart.save();
+
+    return jsonResponse(res,{"cart":await CartResource(cart)});
+
+});
+
+module.exports={index,addToCart,increaseDecrease,clearCart,applyCoupon}

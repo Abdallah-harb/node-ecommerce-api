@@ -13,6 +13,16 @@ const CartSchema = new mongoose.Schema({
     user:{
         type:mongoose.Schema.ObjectId,
         ref:"User"
+    },
+    coupon:{
+        type:mongoose.Schema.ObjectId,
+        ref:"Coupon"
+    },
+    total_price:{
+        type:Number
+    },
+    total_price_after_discount:{
+        type:Number
     }
 
 },{timestamps:true,versionKey:false});

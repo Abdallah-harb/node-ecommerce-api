@@ -29,7 +29,11 @@ const CouponSchema = new mongoose.Schema({
     status:{
       type:Boolean,
       default:false
-    }
+    },
+    users:[{
+        type:mongoose.Schema.ObjectId,
+        ref:"User"
+    }]
 },{timestamps:true,versionKey:false});
 
 CouponSchema.pre('validate',async function (next){

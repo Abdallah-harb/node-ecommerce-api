@@ -10,7 +10,7 @@ const categoryController = require('../controller/User/categoryController');
 const productController = require('../controller/User/productController');
 const reviewController = require("../controller/Admin/reviewController");
 const {ReviewValidate, ValidateReviewId} = require("../validator/reviewValidator");
-
+const {applyCouponValidator} = require('../validator/applyCouponValidator');
 
 //category
 router.get('/categories',categoryController.index)
@@ -18,7 +18,11 @@ router.get('/categories/:slug',categoryController.show);
 
 //products routes
 router.get('/products',productController.index);
-router.get('/products/:slug',productController.show)
+router.get('/products/:slug',productController.show);
+
+// review
+router.post('/reviews',ReviewValidate,reviewController.store)
+router.get('/product/:id/review',ValidateReviewId,reviewController.productReview);
 
 //wishlist
 router.route('/wishlist')
@@ -41,10 +45,7 @@ router.route('/cart')
     .post(cartController.addToCart)
     .delete(cartController.clearCart);
 router.put('/cart/increase-decrease',IncreaseDecreseCartValidator,cartController.increaseDecrease);
-
-// review
-router.post('/reviews',ReviewValidate,reviewController.store)
-router.get('/product/:id/review',ValidateReviewId,reviewController.productReview);
+router.post('/apply-coupon',applyCouponValidator,cartController.applyCoupon);
 
 
 
