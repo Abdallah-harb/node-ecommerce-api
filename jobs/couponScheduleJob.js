@@ -25,7 +25,7 @@ const couponJob = cron.schedule('* * * * *', async ()=>{
     } catch (error) {
         console.error('Error updating expired coupons:', error);
     }
-});
+},{ timezone: 'Africa/Cairo'});
 couponJob.start();
 
 module.exports = couponJob;
