@@ -11,6 +11,7 @@ const productController = require('../controller/User/productController');
 const reviewController = require("../controller/Admin/reviewController");
 const {ReviewValidate, ValidateReviewId} = require("../validator/reviewValidator");
 const {applyCouponValidator} = require('../validator/applyCouponValidator');
+const checkoutController = require('../controller/User/checkoutController');
 
 //category
 router.get('/categories',categoryController.index)
@@ -47,6 +48,9 @@ router.route('/cart')
 router.put('/cart/increase-decrease',IncreaseDecreseCartValidator,cartController.increaseDecrease);
 router.post('/apply-coupon',applyCouponValidator,cartController.applyCoupon);
 
+//checkout
+    // cash-routes
+router.get('/checkout-cash',checkoutController.cashOrder)
 
 
 module.exports = router
