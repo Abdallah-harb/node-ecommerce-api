@@ -12,6 +12,9 @@ const reviewController = require("../controller/Admin/reviewController");
 const {ReviewValidate, ValidateReviewId} = require("../validator/reviewValidator");
 const {applyCouponValidator} = require('../validator/applyCouponValidator');
 const checkoutController = require('../controller/User/checkoutController');
+const orderController = require('../controller/User/orderController');
+const {get} = require("mongoose");
+
 
 //category
 router.get('/categories',categoryController.index)
@@ -50,7 +53,12 @@ router.post('/apply-coupon',applyCouponValidator,cartController.applyCoupon);
 
 //checkout
     // cash-routes
-router.get('/checkout-cash',checkoutController.cashOrder)
+router.get('/checkout-cash',checkoutController.cashOrder);
+
+// orders routes
+router.get('/orders',orderController.index);
+router.get('/orders/:id',ValidateReviewId,orderController.show);
+
 
 
 module.exports = router

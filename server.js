@@ -49,7 +49,7 @@ const server = app.listen(port,()=>{
 });
 
 // cron-job
- require('./jobs/couponScheduleJob');
+ //require('./jobs/couponScheduleJob');
 
 // handel error outside express as DB connect or any things
 process.on('unhandledRejection',(error)=>{
