@@ -12,6 +12,7 @@ const reviewController = require('../controller/Admin/reviewController');
 const {ValidateReviewId,ReviewValidate} = require('../validator/reviewValidator');
 const {CouponValidator,CouponIdValidator} = require('../validator/couponValidator');
 const couponController = require('../controller/Admin/couponController');
+const orderController = require('../controller/Admin/orderController');
 
 //user routes
 router.route('/users')
@@ -85,6 +86,11 @@ router.route("/coupons/:id")
     .put(CouponIdValidator,couponController.update)
     .patch(CouponIdValidator,couponController.toggleActive)
     .delete(CouponIdValidator,couponController.destroy);
+
+//orders routes
+router.get('/orders',orderController.index);
+router.get('/orders/:id',orderController.show);
+router.patch('/order-status/:id',orderController.toggleStatus);
 
 
 

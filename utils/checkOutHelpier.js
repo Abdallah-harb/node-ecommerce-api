@@ -11,7 +11,7 @@ const getCart = asyncHandler(async (userId,session = null)=>{
 });
 
 
-const getCartDetails = asyncHandler(async (req,res,next,session)=>{
+const getCartDetails = asyncHandler(async (req,res,next,session=null)=>{
     const cart = await getCart(req.user._id,session);
     if (!cart) {
         return next(new ApiError('cart not founded',404));
