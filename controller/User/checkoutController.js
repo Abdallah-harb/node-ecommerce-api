@@ -62,6 +62,7 @@ const paymentOrder = asyncHandler(async (req,res,next)=>{
 
 // listen to stripe webhook success or fail
 const webhookCheckout = asyncHandler(async (req,res)=>{
+    console.log('start webhook')
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
     const sig = req.headers['stripe-signature'];
     let event;

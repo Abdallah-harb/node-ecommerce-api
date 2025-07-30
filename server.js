@@ -1,6 +1,7 @@
-const compression = require('compression')
+
 const express = require('express');
 const dotenv = require('dotenv').config();
+const compression = require('compression')
 const cors = require('cors');
 const path = require('path');
 const ApiError = require("./utils/apiError");
