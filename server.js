@@ -1,6 +1,7 @@
+const compression = require('compression')
 const express = require('express');
 const dotenv = require('dotenv').config();
-const app = express();
+const cors = require('cors');
 const path = require('path');
 const ApiError = require("./utils/apiError");
 const globalErrorMiddleware = require("./middleware/globalErrorMiddleware");
@@ -10,13 +11,19 @@ const authRoute = require('./route/authRoute');
 const userRoute = require('./route/userRoute');
 const {checkAuth} = require('./middleware/checkAuthMiddleware');
 const {adminRoutes} = require('./middleware/adminMiddlewrae');
-
+const checkoutController = require('./controller/User/checkoutController');
 require('./helpier/response');
 
 
 // db connection
-dbConnection()
+dbConnection();
 
+const app = express();
+// to allow front ti uses endpoints
+app.use(cors());
+/*app.options('/!*', cors());*/
+app.use(compression());
+// debug endpoint and errors in console
 if (process.env.APP_ENV === 'local'){
     const morgan = require('morgan');
     app.use(morgan('dev'))
@@ -25,6 +32,7 @@ app.use(express.json());
 // to direct access inside folder storage
 app.use(express.static(path.join(__dirname,'storage/upload')));
 
+
 // auth routes
 app.use('/api',authRoute);
 
@@ -32,7 +40,7 @@ app.use('/api',authRoute);
 app.use('/api',checkAuth,userRoute);
 //routes admin dashboard
 app.use('/api/admin',checkAuth,adminRoutes,apiRoute);
-
+app.post('/webhooks/stripe', express.raw({type: 'application/json'}),checkoutController.webhookCheckout);
 
 
 //middleware for route not find
