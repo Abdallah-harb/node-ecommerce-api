@@ -29,6 +29,9 @@ if (process.env.APP_ENV === 'local'){
     const morgan = require('morgan');
     app.use(morgan('dev'))
 }
+
+app.post('/webhooks/stripe', express.raw({type: 'application/json'}),checkoutController.webhookCheckout);
+
 app.use(express.json());
 // to direct access inside folder storage
 app.use(express.static(path.join(__dirname,'storage/upload')));
@@ -41,7 +44,7 @@ app.use('/api',authRoute);
 app.use('/api',checkAuth,userRoute);
 //routes admin dashboard
 app.use('/api/admin',checkAuth,adminRoutes,apiRoute);
-app.post('/webhooks/stripe', express.raw({type: 'application/json'}),checkoutController.webhookCheckout);
+
 
 
 //middleware for route not find

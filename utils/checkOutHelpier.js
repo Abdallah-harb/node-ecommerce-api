@@ -11,8 +11,8 @@ const getCart = asyncHandler(async (userId,session = null)=>{
 });
 
 
-const getCartDetails = asyncHandler(async (req,res,next,session=null)=>{
-    const cart = await getCart(req.user._id,session);
+const getCartDetails = asyncHandler(async (userId,next,session=null)=>{
+    const cart = await getCart(userId,session);
     if (!cart) {
         return next(new ApiError('cart not founded',404));
     }
@@ -26,6 +26,8 @@ const getCartDetails = asyncHandler(async (req,res,next,session=null)=>{
     cart.total_price_after_discount = prices.total_price_after_discount;
     return cart;
 });
+
+
 
 const createOrder = asyncHandler(async (cart,pay_type, session = null)=>{
     const orderDetails = await Promise.all(
