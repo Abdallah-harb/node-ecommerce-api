@@ -2,6 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
 const compression = require('compression')
+const {rateLimit} = require('express-rate-limit');
 const cors = require('cors');
 const path = require('path');
 const ApiError = require("./utils/apiError");
@@ -32,7 +33,15 @@ if (process.env.APP_ENV === 'local'){
 
 app.post('/webhooks/stripe', express.raw({type: 'application/json'}),checkoutController.webhookCheckout);
 
-app.use(express.json());
+app.use(express.json({limit:'20kb'}));
+
+//rate-limit
+const limiter = rateLimit({
+    windowMs: 2 * 60 * 1000, // 5 minutes
+    limit: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    message:"too many requests , per minutes"
+})
+app.use(limiter);
 // to direct access inside folder storage
 app.use(express.static(path.join(__dirname,'storage/upload')));
 
