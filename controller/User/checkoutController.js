@@ -65,7 +65,6 @@ const paymentOrder = asyncHandler(async (req,res,next)=>{
 
 // listen to stripe webhook success or fail
 const webhookCheckout = asyncHandler(async (req, res,next) => {
-    console.log('start webhook');
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
     const sig = req.headers['stripe-signature'];
     let event;
@@ -76,31 +75,24 @@ const webhookCheckout = asyncHandler(async (req, res,next) => {
         console.error('Webhook signature verification failed:', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
-    console.log(event);
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-        console.log(' Payment succeeded for session:', session.id);
         try {
+            const amount = await checkOutHelper.amountAfterPayment(session);
+
             // Get the cart ID passed in the checkout session
             const userID = session.metadata.customer_id;
-            console.log(`session data is :`,session);
-            console.log(`user id is:`,userID);
             // Find the cart
             const cart = await checkOutHelper.getCartDetails(userID,next);
-            if (!cart) {
-                console.error(`❌ Cart not found with ID: ${cartId}`);
-                return res.status(404).json({ error: 'Cart not found' });
-            }
-            console.log(cart)
             // Create order from cart
-            await checkOutHelper.createOrder(cart, 'credit');
+            await checkOutHelper.createOrder(cart, 'credit',amount);
 
             // Delete the cart after successful order creation
             await Cart.deleteOne({ _id: cart._id });
 
-            console.log('✅ Order created and cart deleted');
+            console.log('Order created and cart deleted');
         } catch (err) {
-            console.error('❌ Error during order creation from checkout session:', err.message);
+            console.error('Error during order creation from checkout session:', err.stack);
             return res.status(500).json({ error:err.message });
         }
     }

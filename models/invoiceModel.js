@@ -6,6 +6,10 @@ const InvoiceSchema = new mongoose.Schema({
         ref:"Order",
         required:true
     },
+    total_amount:{
+        type:Number,
+        required:true
+    }
 },{timestamps:true,versionKey:false});
 
 

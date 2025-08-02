@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Cart = require('../models/cartModel');
 const Order = require('../models/orderModel');
 const asyncHandler = require('express-async-handler');
@@ -29,10 +30,10 @@ const getCartDetails = asyncHandler(async (userId,next,session=null)=>{
 
 
 
-const createOrder = asyncHandler(async (cart,pay_type, session = null)=>{
+const createOrder = asyncHandler(async (cart,pay_type,amount=null, session = null)=>{
     const orderDetails = await Promise.all(
         cart.cartItems.map(async item => {
-            const product = await Product.findById(item.product).session(session);;
+            const product = await Product.findById(item.product).session(session);
             product.quantity -= item.quantity;
             product.sold += item.quantity;
             await product.save();
@@ -53,16 +54,42 @@ const createOrder = asyncHandler(async (cart,pay_type, session = null)=>{
         total_price_after_discount:cart.total_price_after_discount,
         order_details:orderDetails
     });
-
-    await createInvoice(order);
+    let total_amount = order.total_price_after_discount;
+    if(amount){
+        total_amount=amount
+    }
+    await createInvoice(order,total_amount);
 });
 
-const createInvoice = asyncHandler(async (order, session = null) => {
-    await Invoice.create([{ order: order._id }], { session });
+const amountAfterPayment = asyncHandler(async (session) => {
+
+    console.log('session from services:',session);
+    const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent, {
+        expand: ["charges.data.balance_transaction"],
+    });
+
+    const charge = paymentIntent.charges?.data[0];
+    if (!charge || !charge.balance_transaction) {
+        console.error("No charge or balance_transaction on paymentIntent:", paymentIntent);
+        return null;
+    }
+
+    // 4) The expanded balance_transaction object
+    const balanceTx = charge.balance_transaction;
+    console.log("Gross amount:", balanceTx.gross); // in cents
+    console.log("Stripe fees:", balanceTx.fee);    // in cents
+    console.log("Net amount:", balanceTx.net);     // in cents
+
+    // 5) Return the net in your chosen unit
+    return balanceTx.net / 100;
+});
+
+const createInvoice = asyncHandler(async (order,amount, session = null) => {
+    await Invoice.create([{ order: order._id,total_amount: amount}], { session });
 });
 
 
 
-module.exports={getCart,getCartDetails,createOrder};
+module.exports={getCart,getCartDetails,createOrder,amountAfterPayment};
 
 
