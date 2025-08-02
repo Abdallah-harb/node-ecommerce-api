@@ -4,6 +4,8 @@ const dotenv = require('dotenv').config();
 const compression = require('compression')
 const {rateLimit} = require('express-rate-limit');
 const cors = require('cors');
+const hpp = require('hpp');
+const mongoSanitize = require('express-mongo-sanitize');
 const path = require('path');
 const ApiError = require("./utils/apiError");
 const globalErrorMiddleware = require("./middleware/globalErrorMiddleware");
@@ -35,6 +37,11 @@ app.post('/webhooks/stripe', express.raw({type: 'application/json'}),checkoutCon
 
 app.use(express.json({limit:'20kb'}));
 
+// To remove data using these defaults:
+app.use(mongoSanitize());
+
+// hpp security for header population
+app.use(hpp());
 //rate-limit
 const limiter = rateLimit({
     windowMs: 2 * 60 * 1000, // 5 minutes
